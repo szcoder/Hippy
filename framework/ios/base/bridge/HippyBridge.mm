@@ -1177,6 +1177,10 @@ static NSString *const hippyOnNightModeChangedParam2 = @"RootViewTag";
     //bind rootview and root node
     _renderManager->RegisterRootView(rootView, _rootNode);
     
+    //persist root node for vl
+    auto &root_map = hippy::RootNode::PersistentMap();
+    bool ret = root_map.Insert(rootView.hippyTag.unsignedIntValue, _rootNode);
+    
     __weak HippyBridge *weakBridge = self;
     auto cb = [weakBridge](int32_t tag, NSDictionary *params){
         HippyBridge *strongBridge = weakBridge;
