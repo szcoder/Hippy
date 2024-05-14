@@ -42,17 +42,18 @@
 #import "UIView+DomEvent.h"
 #import "UIView+Hippy.h"
 #import "UIView+Render.h"
-#import "NSObject+Render.h"
+#import "UIView+RenderManager.h"
 #import "HippyBridgeModule.h"
 #import "HippyModulesSetup.h"
 #import "NativeRenderManager.h"
 #import "HippyShadowListView.h"
-#import "dom/root_node.h"
-#import "objc/runtime.h"
-#import <unordered_map>
 #import "HippyModuleData.h"
 #import "HippyModuleMethod.h"
+#import "HippyBridge+Private.h"
+#import "dom/root_node.h"
+#import "objc/runtime.h"
 #import <os/lock.h>
+#import <unordered_map>
 
 
 using HippyValue = footstone::value::HippyValue;
@@ -185,7 +186,6 @@ NSString *const HippyUIManagerDidEndBatchNotification = @"HippyUIManagerDidEndBa
     // The implementation here needs to be improved to provide a registration mechanism.
     NSHashTable<id<HippyComponent>> *_componentTransactionListeners;
 
-    std::weak_ptr<DomManager> _domManager;
     std::weak_ptr<hippy::RenderManager> _renderManager;
     
     std::mutex _renderQueueLock;
@@ -209,6 +209,7 @@ NSString *const HippyUIManagerDidEndBatchNotification = @"HippyUIManagerDidEndBa
 @implementation HippyUIManager
 
 @synthesize domManager = _domManager;
+@synthesize vfsUriLoader = _vfsUriLoader;
 
 #pragma mark Life cycle
 
@@ -1485,7 +1486,8 @@ NSString *const HippyUIManagerDidEndBatchNotification = @"HippyUIManagerDidEndBa
         }];
     }
     [self addUIBlock:^(HippyUIManager *uiManager, __unused NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-        for (id<HippyComponent> node in uiManager->_componentTransactionListeners) {
+        NSArray *transactionListeners = [uiManager->_componentTransactionListeners allObjects];
+        for (id<HippyComponent> node in transactionListeners) {
             [node hippyBridgeDidFinishTransaction];
         }
     }];
