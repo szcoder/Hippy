@@ -27,7 +27,7 @@
 #import "HippyView.h"
 #import "UIView+DomEvent.h"
 #import "UIView+Hippy.h"
-#import "UIBezierPath+Shadow.h"
+#import "UIBezierPath+HippyShadow.h"
 
 static CGSize makeSizeConstrainWithType(CGSize originSize, CGSize constrainSize, NSString *resizeMode) {
     // width / height
