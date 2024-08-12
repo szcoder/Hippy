@@ -118,24 +118,32 @@ void PagerView::OnAnimationEnd(const int32_t &currentIndex, const float_t &curre
 }
 
 void PagerView::OnContentDidScroll(const int32_t currentIndex, const int32_t pageIndex, const float_t pageOffset) {
-  // position: Position index of the target page.
-  // offset: Value from [-1, 1] indicating the offset from the page at position.
-  auto position = pageIndex;
-  auto offset = pageOffset;
-  
+  // position: Index of the first page currently being displayed.
+  //           Page position+1 will be visible if pageOffset is nonzero.
+  // offset: Value from [0, 1) indicating the offset from the page at position.
+  int32_t position;
+  float_t offset;
+
   // filter the illegal values
-  if (offset < -1.f || offset > 1.f) {
+  if (pageOffset < -1.f || pageOffset > 1.f) {
     return;
   }
-  
-  if (pageIndex == currentIndex + 1) {
-    position = pageIndex;
-    offset = 1.f - offset;
-  } else if (pageIndex == currentIndex - 1) {
-    position = pageIndex;
-    offset = - (1.f + offset);
+
+  if (currentIndex == pageIndex) {
+    //slide from right to left, the position page is currentIndex
+    if (pageOffset <= 0) {
+      position = currentIndex;
+      offset = -pageOffset;
+    } else {
+      //slide from left to right, the position page is currentIndex-1; we need to adjust to last index when negative
+      if (currentIndex > 0) {
+        position = currentIndex - 1;
+      } else {
+        position = static_cast<int32_t>(swiperNode_.GetTotalChildCount()) - 1;
+      }
+      offset = 1.f - pageOffset;
+    }
   } else {
-    // no need to handle current page params
     return;
   }
   
