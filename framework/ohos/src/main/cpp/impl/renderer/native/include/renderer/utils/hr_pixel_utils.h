@@ -34,6 +34,7 @@ public:
     fontSizeScale_ = static_cast<float>(font_size_scale);
   }
   
+  inline static float GetDensity() { return density_; }
   inline static float GetDensityScale() { return densityScale_;  }
   inline static float GetFontSizeScale() { return fontSizeScale_; }
   
