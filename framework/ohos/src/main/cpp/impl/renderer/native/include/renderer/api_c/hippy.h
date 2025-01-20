@@ -28,6 +28,8 @@
 #define HIPPY_EXTERN extern __attribute__((visibility("default")))
 #endif
 
-HIPPY_EXTERN void HippyViewProvider_BindNativeRoot(void *parent_node_handle, uint32_t render_manager_id, uint32_t root_id, uint32_t node_id);
-HIPPY_EXTERN void HippyViewProvider_UnbindNativeRoot(uint32_t render_manager_id, uint32_t root_id, uint32_t node_id);
+HIPPY_EXTERN void HippyViewProvider_CreateRoot(uint32_t root_id, uint32_t first_dom_manager_id);
+HIPPY_EXTERN void HippyViewProvider_DestroyRoot(uint32_t render_manager_id, uint32_t root_id);
+HIPPY_EXTERN void HippyViewProvider_BindNativeRoot(void *parent_node_handle, uint32_t render_manager_id, uint32_t root_id);
+HIPPY_EXTERN void HippyViewProvider_UnbindNativeRoot(uint32_t render_manager_id, uint32_t root_id);
 HIPPY_EXTERN void HippyViewProvider_UpdateRootSize(uint32_t render_manager_id, uint32_t root_id, float width, float height);

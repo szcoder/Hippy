@@ -29,6 +29,7 @@
 
 const uint32_t DEMO_VIEW_A_ID = 1;
 const uint32_t DEMO_RENDER_MANAGER_ID = 1;
+const uint32_t DEMO_FIRST_DOM_MANAGER_ID = 2;
 const uint32_t DEMO_ROOT_ID = 10;
 
 ArkUI_NativeNodeAPI_1 *GetNativeNodeAPI() {
@@ -92,14 +93,6 @@ void BizViewManager::UnbindBizNativeView(uint32_t view_id) {
 }
 
 void BizViewManager::OnHippyRootViewReady() {
-  // 方法说明：
-  // 该方法一定在ts层已经CreateRootView后调用，或者c层实现了同样功能后。
-  // 参数说明：
-  // render_manager_id - 实际由业务从ts层传到c层，ts层获取：hippyEngine.getNativeRenderProvider().getInstanceId()
-  // root_id - 根节点id
-  // width -宽度
-  // height - 高度
-  HippyViewProvider_UpdateRootSize(DEMO_RENDER_MANAGER_ID, DEMO_ROOT_ID, 300, 400);
 }
 
 void BizViewManager::BuildBizViews() {
@@ -107,9 +100,22 @@ void BizViewManager::BuildBizViews() {
   viewHandleMap_[DEMO_VIEW_A_ID] = viewHandle;
   
   // 参数说明：
+  // root_id - 根节点id
+  // first_dom_manager_id - 实际由业务从ts层传到c层，ts层获取：hippyEngine.getHippyEngineContext()?.getDomManagerId()
+  HippyViewProvider_CreateRoot(DEMO_ROOT_ID, DEMO_FIRST_DOM_MANAGER_ID);
+
+  // 参数说明：
   // parent_node_handle - Hippy根节点的父节点
   // render_manager_id - 实际由业务从ts层传到c层，ts层获取：hippyEngine.getNativeRenderProvider().getInstanceId()
   // root_id - 根节点id
-  // node_id - 暂时用不到，填0
-  HippyViewProvider_BindNativeRoot(viewHandle, DEMO_RENDER_MANAGER_ID, DEMO_ROOT_ID, 0);
+  HippyViewProvider_BindNativeRoot(viewHandle, DEMO_RENDER_MANAGER_ID, DEMO_ROOT_ID);
+  
+  // 方法说明：
+  // 该方法一定在HippyViewProvider_CreateRoot后调用。
+  // 参数说明：
+  // render_manager_id - 实际由业务从ts层传到c层，ts层获取：hippyEngine.getNativeRenderProvider().getInstanceId()
+  // root_id - 根节点id
+  // width -宽度
+  // height - 高度
+  HippyViewProvider_UpdateRootSize(DEMO_RENDER_MANAGER_ID, DEMO_ROOT_ID, 300, 400);
 }
